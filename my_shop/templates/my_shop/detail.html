@@ -1,0 +1,65 @@
+{% extends "main/layout.html" %}
+{% load static %}
+
+{% block title %}{{ product.name }}{% endblock %}
+
+{% block content %}
+
+<style>
+.btn-pink {
+  background-color: #E20074;
+  color: #fff;
+  border-color: #E20074;
+}
+
+h1, p {
+  font-family: "Open Sans", sans-serif;
+}
+
+h1 {
+  font-size: 36px;
+  font-weight: 700;
+  line-height: 1.2;
+}
+
+p {
+  font-size: 16px;
+  font-weight: 400;
+  line-height: 1.5;
+}
+
+.text-muted {
+  color: #999;
+}
+
+img {
+  border-radius: 4px;
+  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.2);
+}
+.btn-pink{
+ margin-top:10px;
+}
+.btn-pink:hover{
+ background-color:purple;
+}
+</style>
+<div class="container py-5">
+  <div class="row">
+    <div class="col-md-6">
+      <img src="{% if product.image %}{{ product.image.url }}{% else %}{% static 'main/img/no_image.png' %}{% endif %}" class="w-100">
+    </div>
+    <div class="col-md-6">
+      <h1 class="mb-4" style="color: #E20074;">{{ product.name }}</h1>
+      <h2 class="mb-3"><a href="{{ product.category.get_absolute_url }}" class="text-secondary">{{ product.category }}</a></h2>
+      <p class="text-muted mb-4" style="color: #E20074;">{{ product.price }} руб.</p>
+      <p class="mb-4">{{ product.description|linebreaks }}</p>
+      <form action="{% url 'cart:cart_add' product.id %}" method="post">
+        {{ cart_product_form }}
+        {% csrf_token %}
+        <input type="submit" value="В корзину" class="btn btn-pink">
+      </form>
+    </div>
+  </div>
+</div>
+
+{% endblock %}

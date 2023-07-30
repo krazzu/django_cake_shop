@@ -1,0 +1,136 @@
+{% extends "main/layout.html" %}
+
+{% block title %}Оформление заказа{% endblock %}
+
+{% load static %}
+
+{% block content %}
+<style>
+  .form-title {
+    text-align: center;
+    margin-top: 50px;
+    margin-bottom: 30px;
+  }
+
+  .form-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin: 0 auto;
+    max-width: 500px;
+  }
+
+  .form-group img {
+    margin-right: 10px;
+  }
+
+  .form-group label {
+    margin: 0;
+    font-size: 16px;
+    flex: 1;
+  }
+
+  .form-group input {
+    margin-left: 10px;
+    width: 40px;
+    font-size: 16px;
+    text-align: center;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+    padding: 5px;
+  }
+
+  .total-price {
+    margin-top: 20px;
+    width: 100%;
+    text-align: right;
+    font-size: 20px;
+    font-weight: bold;
+    position:relative;
+  }
+
+  .btn {
+    padding: 10px 20px;
+    font-size: 16px;
+    border-radius: 5px;
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+  }
+
+  .btn:hover {
+    background-color: #0069d9;
+  }
+.form-group {
+  margin-bottom: 20px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between; /* new */
+}
+
+.product_name {
+  position: relative;
+  font-size: 20px;
+  flex: 1; /* new */;
+  margin:2px;
+}
+
+.product_quantity {
+  margin-left: 65px;
+  width: 40px;
+  font-size: 16px;
+  text-align: center;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+  padding: 5px;
+}
+
+  .image{
+  width:auto;
+  height:150px;
+  border-radius:10px;
+  }
+  .btn.btn-primary{
+  background-color:pink;
+  border:2px solid black;
+  margin:10px;
+  }
+  .btn.btn-primary:hover{
+  background-color:purple;
+  }
+</style>
+
+<h2 class="form-title">Оформление заказа</h2>
+
+<form method="post" class="form-container" enctype="multipart/form-data">
+  {% csrf_token %}
+  {{ form.as_p }}
+{% for item in cart %}
+    {% with product=item.product %}
+      <div class="form-group row">
+        <div class="col-sm-4">
+          <div class="product_name">
+            {{ product.name }}
+          </div>
+        </div>
+        <div class="col-sm-4">
+          <img class="image" src="{% if product.image %}{{ product.image.url }}{% else %}{% static 'img/no_image.png' %}{% endif %}" alt="product image">
+        </div>
+        <div class="col-sm-4">
+          <div class="product_quantity">{{ item.quantity }}</div>
+        </div>
+      </div>
+    {% endwith %}
+  {% endfor %}
+
+
+  <div class="form-group row">
+    <div class="col-sm-10">
+      <label class="total-price">Итоговая стоимость: {{ cart.get_total_price }}</label>
+    </div>
+  </div>
+
+  <button type="submit" class="btn btn-primary">Отправить</button>
+</form>
+{% endblock %}

@@ -1,0 +1,254 @@
+{% extends 'main/layout.html' %}
+{% load static %}
+{% block title %}{{ title }}{% endblock %}
+
+{% block content %}
+<style>
+  .cake-block {
+   background-color: #ffe4e1;
+   padding: 20px;
+   border-radius: 10px;
+   margin-bottom: 20px;
+   font-size:35px;
+
+ }
+
+ .my-block {
+   background-color: #ffe4e1;
+   padding: 20px;
+   border-radius: 10px;
+   margin-bottom: 20px;
+   font-size:35px;
+
+ }
+
+ h2 {
+   color: #ff6aa7;
+
+ }
+
+ .cake-block p {
+   color: #9f9f9f;
+
+ }
+ .my-block p{
+   color: #9f9f9f;
+ }
+ .container-about{
+  width:100%;
+  margin-right:auto;
+  margin-left:auto;
+  font-family: 'Cormorant Garamond', serif;
+  }
+  .container-main{
+  width: 100%;
+  height: 1000px;
+  border-radius: 5%;
+  align-items: center;
+  overflow-x: auto;
+  background-color:#e2e0e3;
+  margin-bottom:20px;
+  padding:25px;
+ }
+
+.container-slider {
+  display: flex;
+  flex-direction: column;
+  position: absolute;
+  height: 900px;
+  width: 40%;
+  margin-left: 18%;
+  max-width:45%;
+  margin-left:20%;
+  margin-top:35px;
+}
+
+.slider {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+
+.main-image {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  margin-top: 20px;
+  border-radius: 60px;
+}
+
+.button-container {
+  margin-top:10px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  max-height:20%;
+}
+
+.button {
+  height: 25%;
+  border-radius: 100%;
+  background-color: white;
+  border: 1px solid black;
+  margin-bottom: 5px;
+  cursor: pointer;
+  margin: 35px;
+  margin-right: 25%;
+  position: relative;
+}
+
+hr {
+  border: none;
+  border-top: 10px dotted gray;
+  color: #fff;
+  height: 1px;
+  width: 100%;
+  position: absolute;
+}
+
+.active {
+  background-color: #ff6aa7;
+}
+
+.thumbnails {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 30px;
+}
+
+.thumbnail {
+  width: 120px;
+  height: 120px;
+  object-fit: cover;
+  border-radius: 10px;
+  margin-right: 25%;
+  cursor: pointer;
+}
+
+.active-thumbnail {
+  border: 2px solid red;
+}
+.image4{
+position: absolute;
+ width: 700px;
+ height: 600px;
+ display: flex;
+ object-fit: cover;
+ border-radius: 10%;
+ margin-top: 68px;
+ max-width: 50%;
+ margin-left:5%;
+}
+.btn-warning{
+  background-color:pink;
+  position: absolute;
+  margin-top: 500px;
+  margin-left:10%;
+  width:200px;
+  height:50px;
+}
+.btn-warning:hover{
+ background-color:white;
+}
+h3{
+ position: absolute;
+  margin-top: 400px;
+  margin-left:20px;
+}
+.upper{
+position: absolute;
+  margin-top: 300px;
+  margin-left:20px;
+  color:black;
+}
+.slider.d-none.d-md-block{
+ background:#e2e0e3;
+}
+</style>
+<div class="container-main">
+  <div class="row">
+    <div class="col-md-4 col-12">
+      <a href="{% url 'my_shop:product_list' %}">
+        <button class="btn btn-warning rounded-pill px-3" type="button">Заказать</button>
+      </a>
+      <div class="mobile-heading d-none">
+        <h2 class="upper">Cамые лучшие торты в ревде!</h2>
+        <h3>Заказывайте самые вкусные тортики!</h3>
+      </div>
+    </div>
+    <div class="col-md-8 col-12">
+      <div class="container-slider">
+        <div class="slider d-none d-md-block">
+          <img src="{% static 'main/img/image1.jpg' %}" class="main-image">
+        </div>
+        <div class="slider d-block d-md-none">
+          <img src="{% static 'main/img/image1.jpg' %}" class="main-image">
+        </div>
+        <div class="button-container">
+          <hr>
+          <button class="button active" data-index="0"></button>
+          <button class="button" data-index="1"></button>
+          <button class="button" data-index="2"></button>
+        </div>
+        <div class="thumbnails">
+          <img src="{% static 'main/img/image1.jpg' %}" class="thumbnail active" data-index="0">
+          <img src="{% static 'main/img/image2.jpg' %}" class="thumbnail" data-index="1">
+          <img src="{% static 'main/img/image3.jpg' %}" class="thumbnail" data-index="2">
+        </div>
+      </div>
+    </div>
+    <div class="col-md-4 d-md-block d-none">
+      <div class="desktop-heading">
+        <h2 class="upper">Cамые лучшие торты!</h2>
+        <h3>Заказывайте самые вкусные тортики!</h3>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<div class="container-about" id="about_us">
+  <div class="cake-block">
+   <h2>Про торты</h2>
+   <p>Описание про торты</p>
+ </div>
+
+ <div class="my-block">
+   <h2>Про меня</h2>
+   <p>Описание обо мне</p>
+ </div>
+</div>
+<script>
+const mainImage = document.querySelector('.main-image');
+const thumbnails = document.querySelectorAll('.thumbnail');
+const buttons = document.querySelectorAll('.button');
+
+thumbnails.forEach((thumbnail) => {
+  thumbnail.addEventListener('click', () => {
+    const index = thumbnail.getAttribute('data-index');
+    mainImage.src = `static/main/img/image${parseInt(index) + 1}.jpg`;
+    thumbnails.forEach((tn) => tn.classList.remove('active-thumbnail'));
+    thumbnail.classList.add('active-thumbnail');
+    buttons.forEach((btn) => btn.classList.remove('active'));
+    buttons[index].classList.add('active');
+  });
+});
+
+buttons.forEach((button) => {
+  button.addEventListener('click', () => {
+    const index = button.getAttribute('data-index');
+    mainImage.src = `static/main/img/image${parseInt(index) + 1}.jpg`;
+    buttons.forEach((btn) => btn.classList.remove('active'));
+    button.classList.add('active');
+    thumbnails.forEach((tn) => tn.classList.remove('active-thumbnail'));
+    thumbnails[index].classList.add('active-thumbnail');
+  });
+});
+</script>
+
+{% endblock %}

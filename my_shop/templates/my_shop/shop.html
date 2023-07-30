@@ -1,0 +1,146 @@
+{% extends 'main/layout.html' %}
+{% load static %}
+{% block title %}
+{% if category %}{{ category.name }}{% else %}Товары{% endif %}
+{% endblock %}
+{% block content %}
+<style>
+    .container {
+      max-width: 1200px;
+    }
+
+    .sidebar {
+      padding: 20px;
+      background-color: #f8f9fa;
+      color:black;
+    }
+
+    .list-group-item {
+      border: none;
+    }
+
+    .list-group{
+     color:black;
+    }
+
+    .list-group-item.active {
+      background-color: pink;
+      color: #fff;
+      border-radius: 50px;
+    }
+
+
+    .card {
+      border: none;
+      transition: transform 0.2s ease-in-out;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+      border-radius: 15px;
+    }
+
+    .card:hover {
+      transform: translateY(-5px);
+    }
+
+    .card-img-top {
+      height: 200px;
+      object-fit: cover;
+      border-top-left-radius: 15px;
+      border-top-right-radius: 15px;
+    }
+
+    .card-body {
+      padding: 20px;
+    }
+
+    .card-title {
+      font-size: 22px;
+      font-weight: 700;
+      color: #f56565;
+      margin-bottom: 10px;
+    }
+
+    .card-text {
+      font-size: 16px;
+      color: #333;
+      margin-bottom: 15px;
+    }
+
+    .card-link {
+      color: #f56565;
+      font-weight: 600;
+      transition: color 0.2s ease-in-out;
+    }
+
+    .card-link:hover {
+      color: #f56565;
+      text-decoration: none;
+    }
+
+    .price {
+      font-size: 24px;
+      font-weight: 700;
+      color: #f56565;
+      margin-bottom: 15px;
+    }
+    .list-group a{
+     text-decoration:none;
+     color:purple;
+    }
+    @media (min-width:576px){
+       .list-group-item {
+        height:80px;
+        font-size:32px;
+      }
+    }
+    @media (min-width:768px){
+       .list-group-item {
+        height:60px;
+        font-size:24px;
+      }
+    }
+    @media (min-width:1200px){
+       .list-group-item {
+        height:40px;
+        font-size:16px;
+      }
+    }
+
+</style>
+<div class="container">
+  <div class="row">
+    <div class="col-lg-3 col-md-4 col-sm-12">
+      <div class="sidebar">
+        <h3>Категория</h3>
+        <ul class="list-group">
+          <li class="list-group-item {% if not category %}active{% endif %}">
+            <a href="{% url 'shop:product_list' %}">Все</a>
+          </li>
+          {% for c in categories %}
+          <li class="list-group-item {% if category.slug == c.slug %}active{% endif %}">
+            <a href="{{ c.get_absolute_url }}">{{ c.name }}</a>
+          </li>
+          {% endfor %}
+        </ul>
+      </div>
+    </div>
+    <div class="col-lg-9 col-md-8 col-sm-12">
+      <div class="row">
+        {% for product in products %}
+        <div class="col-lg-4 col-md-6 col-sm-12 mb-4">
+          <div class="card h-100">
+            <a href="{{ product.get_absolute_url }}">
+              <img class="card-img-top" src="{% if product.image %}{{ product.image.url }}{%else %}{% static 'main/img/no_image.png' %}{% endif %}">
+            </a>
+            <div class="card-body">
+              <h5 class="card-title">{{ product.name }}</h5>
+              <p class="card-text">{{ product.price }} руб.</p>
+            </div>
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endblock %}

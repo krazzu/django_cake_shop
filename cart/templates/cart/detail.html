@@ -1,0 +1,313 @@
+{% extends "main/layout.html" %}
+{% load static %}
+
+{% block title %}
+Корзина покупок
+{% endblock %}
+
+{% block content %}
+<style>
+  /* Global styles */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  font-family: Arial, sans-serif;
+}
+
+body {
+  background-color: #f7e7e7;
+}
+
+h1, h2, h3 {
+  font-weight: bold;
+  color: #333;
+}
+
+/* Cart styles */
+.cart-title {
+  font-size: 2.5rem;
+  text-align: center;
+  padding: 2rem 0;
+  color: #ee7096;
+}
+
+.cart-container {
+  max-width: 1000px;
+  margin: 0 auto;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.cart-item {
+  display: flex;
+  margin: 1rem;
+  background-color: #fff;
+  border-radius: 5px;
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+.cart-item-img {
+  flex-basis: 30%;
+  padding: 1rem;
+}
+
+.cart-item-img img {
+  width: 100%;
+}
+
+.cart-item-info {
+  flex-basis: 70%;
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.product-name {
+  font-size: 1.5rem;
+  margin-bottom: 1rem;
+  color: #ee7096;
+}
+
+.cart-item-actions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1rem;
+}
+
+.quantity-form {
+  display: flex;
+  align-items: center;
+}
+
+.quantity-button {
+  cursor: pointer;
+  color: #ee7096;
+  font-size: 1.5rem;
+  padding: 0.5rem;
+}
+
+.quantity-input {
+  width: 50px;
+  text-align: center;
+  border:  1px solid #f5b0c5;
+  margin: 0 0.5rem;
+}
+
+.cart-item-delete a {
+  color: #ee7096;
+}
+
+.cart-item-price {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.price-per-unit {
+  font-size: 1.2rem;
+  color: #666;
+}
+
+.total-price {
+  font-size: 1.5rem;
+  color: #ee7096;
+}
+
+.empty-cart-message {
+  font-size: 2rem;
+  text-align: center;
+  padding: 2rem;
+  color: #ee7096;
+}
+
+.cart-total {
+  margin-top: 2rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.total-title {
+  font-size: 1.5rem;
+  font-weight: normal;
+  color: #333;
+}
+
+.cart-actions {
+  margin-top: 2rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.button {
+  display: inline-block;
+  padding: 1rem 2rem;
+  font-size: 1.2rem;
+  text-align: center;
+  background-color: #f5b0c5;
+  color: #333;
+  border-radius: 5px;
+  text-decoration: none;
+  margin-left: 0;
+}
+
+.button light {
+  background-color: #f5b0c5;
+  color: #333;
+  margin-left:0;
+}
+</style>
+   <h1 class="cart-title">Корзина покупок</h1>
+
+  <div class="cart-container">
+    {% for item in cart %}
+      {% with product=item.product %}
+        <div class="cart-item">
+          <div class="cart-item-img">
+            <a href="{{ product.get_absolute_url }}">
+              <img src="{% if product.image %}{{ product.image.url }}{% else %}{% static 'img/no_image.png' %}{% endif %}">
+            </a>
+          </div>
+          <div class="cart-item-info">
+            <h2 class="product-name">{{ product.name }}</h2>
+            <div class="cart-item-actions">
+              <form class="quantity-form" id="quantity-form-{{ item.id }}">
+                {{ item.update_quantity_form.update }}
+                {% csrf_token %}
+                <div class="quantity-button minus">
+                  <i class="fas fa-minus"></i>
+                </div>
+                <input class="quantity-input" type="number" min="1" max="5" value="{{ item.quantity }}" data-product-id="{{ product.id }}" data-form-id="{{ item.id }}" name="quantity">
+                <div class="quantity-button plus">
+                  <i class="fas fa-plus"></i>
+                </div>
+              </form>
+              <div class="cart-item-delete">
+                <a href="{% url 'cart:cart_remove' product.id %}"><i class="fas fa-trash-alt"></i></a>
+              </div>
+            </div>
+            <div class="cart-item-price">
+              <span class="price-per-unit">{{ item.price }}₽</span>
+              <span class="total-price">{{ item.total_price }}₽</span>
+            </div>
+          </div>
+        </div>
+      {% endwith %}
+    {% endfor %}
+
+    {% if not cart %}
+      <p class="empty-cart-message">Ваша корзина пуста</p>
+    {% endif %}
+  </div>
+
+  <div class="cart-total">
+    <h3 class="total-title"></h3>
+    <span class="total-price" data-total-price>{% if cart %}{{ cart.get_total_price }}₽{% else %}0₽{% endif %}</span>
+  </div>
+
+  <div class="cart-actions">
+    <a href="{% url 'shop:product_list' %}" class="button">Продолжить покупки</a>
+    {% if cart.get_total_price == 0 %}
+    <a href="" class="button" >Оформить заказ</a>
+    {% else %}
+    <a href="{% url 'order:order' %}" class="button">Оформить заказ</a>
+{% endif %}
+  </div>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+  // Get all the quantity forms on the page
+  const quantityForms = document.querySelectorAll('.quantity-form');
+
+  // Loop through each quantity form and attach a click event listener to the plus and minus buttons
+  quantityForms.forEach((form) => {
+    const minusButton = form.querySelector('.minus');
+    const plusButton = form.querySelector('.plus');
+    const quantityInput = form.querySelector('.quantity-input');
+    const pricePerUnit = parseFloat(form.parentNode.parentNode.querySelector('.price-per-unit').innerText.slice());
+    const totalItemPrice = form.parentNode.parentNode.querySelector('.total-price');
+    const productId = quantityInput.dataset.productId;
+    const formId = quantityInput.dataset.formId;
+
+    // Update the total item price whenever the quantity changes
+    const updateTotalPrice = () => {
+      const quantity = parseInt(quantityInput.value);
+      const total = quantity * pricePerUnit;
+      if (!isNaN(total)) {
+        totalItemPrice.innerText = `${total.toFixed(2)}₽`;
+        updateCartTotalPrice();
+        updateCart(productId, quantity); // Заменено на функцию updateCart
+      } else {
+        totalItemPrice.innerText = '0.00₽';
+      }
+    };
+
+    minusButton.addEventListener('click', () => {
+      if (quantityInput.value > 1) {
+        quantityInput.value = parseInt(quantityInput.value) - 1;
+        updateTotalPrice();
+      }
+    });
+
+    plusButton.addEventListener('click', () => {
+      if (quantityInput.value < 5) {
+        quantityInput.value = parseInt(quantityInput.value) + 1;
+        updateTotalPrice();
+      }
+    });
+
+    // Update the total item price when the quantity input loses focus
+    quantityInput.addEventListener('blur', updateTotalPrice);
+  });
+
+  // Update the total price of the cart whenever a quantity changes
+  const updateCartTotalPrice = () => {
+    const cartTotalPrice = document.querySelector('.cart-total .total-price');
+    const cartItemPrices = document.querySelectorAll('.cart-item .total-price');
+    let total = 0;
+    cartItemPrices.forEach((price) => {
+      total += parseFloat(price.innerText.slice());
+    });
+    cartTotalPrice.innerText = `${total.toFixed(2)}₽`;
+  };
+
+  // Call the updateCartTotalPrice function initially to update the total cart price
+  updateCartTotalPrice();
+
+  // Update the cart in the server using AJAX
+  function updateCart(productId, quantity) {
+  const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value; // Получение CSRF токена из скрытого поля формы
+  $.ajax({
+    url: '/cartupdate/',
+    method: 'POST',
+    data: {
+      'product_id': productId,
+      'quantity': quantity,
+      'csrfmiddlewaretoken': csrfToken // Передача CSRF токена в параметрах запроса
+    },
+    success: function(data) {
+      $('#cart-total').text(data.total_quantity);
+      $('#cart-total-price').text(data.total_price);
+    }
+  });
+}
+
+  // Attach a click event listener to the "Оформить заказ" button
+  const checkoutButton = document.querySelector('.cart-actions .button');
+  checkoutButton.addEventListener('click', () => {
+    // Check if the cart is empty
+    const cartTotalQuantity = parseInt(document.querySelector('#cart-total').innerText);
+    if (cartTotalQuantity === 0) {
+      alert('Нельзя оформить заказ, пока корзина пуста!');
+    } else {
+      // Redirect to the checkout page
+      window.location.href = '/checkout/';
+    }
+  });
+</script>
+{% endblock %}
